@@ -1,17 +1,18 @@
 import { FC, useMemo } from 'react';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
-import { useDispatch } from '../../services/store';
+import { useDispatch, useSelector } from '../../services/store';
 import { useNavigate } from 'react-router-dom';
 import { selectConstructor, selectConstructorItems } from '../../services/slice/burgerConstructorSlice';
-import { useSelector } from 'react-redux';
+import { selectUser } from '../../services/slice/userSlice';
+// import { useSelector } from 'react-redux';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const bun = useSelector(selectConstructor);
   const items = useSelector(selectConstructorItems)
-  //const user = useSelector(selectUser);
+  // const user = useSelector(selectUser);
 
     const constructorItems = {
     bun,

@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 // import { checkUserAuth } from '../../services/slice/userSlice';
 import { fetchIngredients, selectIngredients } from '../../services/slice/ingredientsSlice';
 import { useDispatch, useSelector } from '../../services/store';
+import { checkUserAuth } from '../../services/slice/userSlice';
 // import { useDispatch, useSelector } from 'react-redux';
 
 const App = () => {
@@ -24,18 +25,18 @@ const App = () => {
   const state = location.state;
   const background = state?.background;
 
-  // useEffect(() => {
-  //   if (!ingredients.length) {
-  //     dispatch(fetchIngredients());
-  //   }
-  //   // if (!ordersFeed.length) {
-  //   //   dispatch(fetchFeed());
-  //   // }
-  // }, []);
+  useEffect(() => {
+    if (!ingredients.length) {
+      dispatch(fetchIngredients());
+    }
+    // if (!ordersFeed.length) {
+    //   dispatch(fetchFeed());
+    // }
+  }, []);
 
-  // useEffect(() => {
-  //   dispatch(checkUserAuth());
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(checkUserAuth());
+  }, [dispatch]);
 
   return (
     <div className={styles.app}>
@@ -56,7 +57,7 @@ const App = () => {
             }
           />
          <Route path='/feed' element={<Feed />} /> 
-          {/* <Route
+          <Route
             path=':number'
             element={
               <Modal
@@ -66,7 +67,7 @@ const App = () => {
                 <OrderInfo />
               </Modal>
             }
-          /> */} 
+          /> 
           {/* <Route path='/profile/orders/:number' element={<OrderInfo />} />
           <Route
             path='/login'
