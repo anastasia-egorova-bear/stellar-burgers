@@ -1,15 +1,29 @@
 import { FC, useMemo } from 'react';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
+import { useDispatch } from '../../services/store';
+import { useNavigate } from 'react-router-dom';
+import { selectConstructor, selectConstructorItems } from '../../services/slice/burgerConstructorSlice';
+import { useSelector } from 'react-redux';
 
 export const BurgerConstructor: FC = () => {
-  /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const bun = useSelector(selectConstructor);
+  const items = useSelector(selectConstructorItems)
+  //const user = useSelector(selectUser);
+
   const constructorItems = {
     bun: {
       price: 0
     },
     ingredients: []
   };
+
+  //   const constructorItems = {
+  //   bun,
+  //   ingredients: items
+  // };
 
   const orderRequest = false;
 
@@ -18,7 +32,29 @@ export const BurgerConstructor: FC = () => {
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
   };
-  const closeOrderModal = () => {};
+
+  //   const onOrderClick = async () => {
+  //   if (!user) {
+  //     navigate('/login');
+  //     return;
+  //   }
+
+  //   if (!constructorItems.bun || orderRequest || !constructorItems.ingredients)
+  //     return;
+
+  //   const ingredientIds = [
+  //     constructorItems.bun._id,
+  //     ...constructorItems.ingredients.map((item) => item._id),
+  //     constructorItems.bun._id
+  //   ];
+
+  //   await dispatch(createOrder(ingredientIds));
+  // };
+
+  // const closeOrderModal = () => {};
+    const closeOrderModal = () => {
+    window.history.back();
+  };
 
   const price = useMemo(
     () =>
@@ -32,14 +68,14 @@ export const BurgerConstructor: FC = () => {
 
   return null;
 
-  return (
-    <BurgerConstructorUI
-      price={price}
-      orderRequest={orderRequest}
-      constructorItems={constructorItems}
-      orderModalData={orderModalData}
-      onOrderClick={onOrderClick}
-      closeOrderModal={closeOrderModal}
-    />
-  );
+  // return (
+  //   <BurgerConstructorUI
+  //     price={price}
+  //     orderRequest={orderRequest}
+  //     constructorItems={constructorItems}
+  //     orderModalData={orderModalData}
+  //     onOrderClick={onOrderClick}
+  //     closeOrderModal={closeOrderModal}
+  //   />
+  // );
 };

@@ -1,76 +1,63 @@
-// Импортируем необходимые компоненты
-// import { getIngredientsApi } from '@api';
-// import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-// // import { RootState } from  // путь к вашему файлу store
-// // import { TIngredient } from './/utils/types'; // путь к вашим типам
-// // import { getIngredientsApi } from '..//utils/burger-api'; // путь к вашему api файлу
-// // import type { RootState } from '../store';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { TIngredient, TConstructorIngredient } from '../../utils/types';
 
-// import { createAsyncThunk } from "@reduxjs/toolkit";
+export type ConstructorState = {
+  bun: TIngredient | null;
+  items: TConstructorIngredient[];
+};
 
-// // Определяем тип для payload
-// export interface IngredientsPayload {
-//   ingredients: TIngredient[];
-// }
+const initialState: ConstructorState = {
+  bun: null,
+  items: []
+};
 
-// // Создаем asyncThunk
-// export const fetchIngredients = createAsyncThunk(
-//   'ingredients/fetchIngredients',
-//   async () => {
-//     try {
-//       // Вызываем API функцию
-//       const response = await getIngredientsApi();
-//       return response;
-//     } catch (error) {
-//       throw new Error('Ошибка при получении ингредиентов');
-//     }
-//   }
-// );
-
-// // Пример использования в slice
-// import { createSlice } from '@reduxjs/toolkit';
-// import { TIngredient } from '@utils-types';
-// import { RootState } from '../store';
-
-// export const burgerConstructorSlice = createSlice({
-//   name: 'ingredients',
-//   initialState: {
-//     ingredients: [] as TIngredient[],
-//     status: 'idle' as 'idle' | 'loading' | 'failed',
-//     error: null as string | null,
-//   },
-//   reducers: {},
-//   extraReducers: (builder) => {
-//     builder
-//       .addCase(fetchIngredients.pending, (state) => {
-//         state.status = 'loading';
-//         state.error = null;
-//       })
-//       .addCase(fetchIngredients.fulfilled, (state, action: PayloadAction<TIngredient[]>) => {
-//         state.status = 'idle';
-//         state.ingredients = action.payload;
-//       })
-//       .addCase(fetchIngredients.rejected, (state, action) => {
-//         state.status = 'failed';
-//         // state.error = action.error?.message;
-//       });
-//   },
-// });
-
-// Экспортируем reducer
-// export const { actions, reducer: ingredientsReducer } = burgerConstructorSlice;
+export const burgerConstructorSlice = createSlice({
+  name: 'burgerConstructor',
+  initialState,
+  reducers: {
+    setBun(state, action) {
+      state.bun = action.payload;
+    },
+    addItem(state, action) {
+      if (!state.items) {
+        state.items = [];
+      }
+      const constructorIngredient: TConstructorIngredient = {
+        ...action.payload,
+        id: `${action.payload._id}_${Date.now()}`
+      };
+      state.items.push(constructorIngredient);
+    },
+    removeItem(state, action: PayloadAction<number>) {
+      if (!state.items) {
+        state.items = [];
+        return;
+      }
+      state.items.splice(action.payload, 1);
+    },
+    reorderItems(state, action: PayloadAction<{ from: number; to: number }>) {
+      if (!state.items) {
+        state.items = [];
+        return;
+      }
+      const { from, to } = action.payload;
+      const [moved] = state.items.splice(from, 1);
+      state.items.splice(to, 0, moved);
+    },
+    reset(state) {
+      state.bun = null;
+      state.items = [];
+    }
+  },
+  selectors: {
+    selectConstructor: (state) => state.bun,
+    selectConstructorItems: (state) => state.items
+  }
+});
 
 
-// export const { setBun, addItem, removeItem, reorderItems, reset } =
-//   burgerConstructorSlice.actions;
-// export default burgerConstructorSlice.reducer;
-
-// export const selectConstructor = (state: RootState) => state.burgerConstructor;
-// export const selectConstructorBun = (state: RootState) =>
-//   state.burgerConstructor.bun;
-// export const selectConstructorItems = (state: RootState) =>
-//   state.burgerConstructor.items;
-
-
-
+export const { selectConstructor, selectConstructorItems } = burgerConstructorSlice.selectors;
+export const { setBun, addItem, removeItem, reorderItems, reset } =
+  burgerConstructorSlice.actions;
+export default burgerConstructorSlice.reducer;
 
