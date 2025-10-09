@@ -4,15 +4,15 @@ import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store';
 import { useNavigate } from 'react-router-dom';
 import { selectConstructor, selectConstructorItems } from '../../services/slice/burgerConstructorSlice';
-import { selectIsAuthenticated, selectUser } from '../../services/slice/userSlice';
+import { selectUser } from '../../services/slice/userSlice';
+import { createOrder } from '../../services/slice/orderSlice';
 
 export const BurgerConstructor: FC = () => {
   const bun = useSelector(selectConstructor);
   const items = useSelector(selectConstructorItems);
-  // const isAuthenticated = useSelector(selectIsAuthenticated);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // const user = useSelector(selectUser);
+  const user = useSelector(selectUser);
 
   const constructorItems = {
     bun,
@@ -23,27 +23,23 @@ export const BurgerConstructor: FC = () => {
 
   const orderModalData = null;
 
-  const onOrderClick = () => {
-    if (!constructorItems.bun || orderRequest) return;
+  const onOrderClick = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    if (!constructorItems.bun || orderRequest || !constructorItems.ingredients)
+      return;
+
+    const ingredientId = [
+      constructorItems.bun._id,
+      ...constructorItems.ingredients.map((item) => item._id),
+      constructorItems.bun._id
+    ];
+
+    await dispatch(createOrder(ingredientId));
   };
-
-  //   const onOrderClick = async () => {
-  //   if (!user) {
-  //     navigate('/login');
-  //     return;
-  //   }
-
-  //   if (!constructorItems.bun || orderRequest || !constructorItems.ingredients)
-  //     return;
-
-  //   const ingredientIds = [
-  //     constructorItems.bun._id,
-  //     ...constructorItems.ingredients.map((item) => item._id),
-  //     constructorItems.bun._id
-  //   ];
-
-  //   await dispatch(createOrder(ingredientIds));
-  // };
 
   const closeOrderModal = () => {
     window.history.back();
