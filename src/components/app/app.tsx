@@ -7,11 +7,9 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 // import { Protected } from '../protected-route/protectedRoute';
 import { useEffect } from 'react';
 // import { Preloader } from '@ui';
-// import { checkUserAuth } from '../../services/slice/userSlice';
 import { fetchIngredients, selectIngredients } from '../../services/slice/ingredientsSlice';
 import { useDispatch, useSelector } from '../../services/store';
 import { checkUserAuth } from '../../services/slice/userSlice';
-// import { useDispatch, useSelector } from 'react-redux';
 
 const App = () => {
   const dispatch = useDispatch();

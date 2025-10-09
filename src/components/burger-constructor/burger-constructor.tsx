@@ -4,17 +4,17 @@ import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store';
 import { useNavigate } from 'react-router-dom';
 import { selectConstructor, selectConstructorItems } from '../../services/slice/burgerConstructorSlice';
-import { selectUser } from '../../services/slice/userSlice';
-// import { useSelector } from 'react-redux';
+import { selectIsAuthenticated, selectUser } from '../../services/slice/userSlice';
 
 export const BurgerConstructor: FC = () => {
+  const bun = useSelector(selectConstructor);
+  const items = useSelector(selectConstructorItems);
+  // const isAuthenticated = useSelector(selectIsAuthenticated);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const bun = useSelector(selectConstructor);
-  const items = useSelector(selectConstructorItems)
   // const user = useSelector(selectUser);
 
-    const constructorItems = {
+  const constructorItems = {
     bun,
     ingredients: items
   };
@@ -45,7 +45,7 @@ export const BurgerConstructor: FC = () => {
   //   await dispatch(createOrder(ingredientIds));
   // };
 
-    const closeOrderModal = () => {
+  const closeOrderModal = () => {
     window.history.back();
   };
 

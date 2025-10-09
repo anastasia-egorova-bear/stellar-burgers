@@ -100,7 +100,7 @@ export const userSlice = createSlice({
     setUser:(state, action) => {
       state.user = action.payload;
     },
-    setIsAuthChecked: (state, action: PayloadAction<boolean>) => {
+    setIsAuthChecked: (state, action) => {
       state.isAuthChecked = action.payload;
     }, 
     setIsAuthenticated(state, action) {
@@ -156,4 +156,4 @@ export const userSlice = createSlice({
 export const { setUser, setIsAuthChecked, setIsAuthenticated } = userSlice.actions;
 export const { selectUser, selectIsAuthChecked, selectIsAuthenticated, selectErrorMessage, selectUserOrders, selectisModalOpen, selectloading } = userSlice.selectors;
 
-
+export default userSlice.reducer;
