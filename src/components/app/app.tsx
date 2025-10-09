@@ -19,7 +19,6 @@ import {
   Routes,
   useLocation
 } from 'react-router-dom';
-// import { Protected } from '../protected-route/protectedRoute';
 import { useEffect } from 'react';
 // import { Preloader } from '@ui';
 import {
@@ -29,11 +28,12 @@ import {
 import { useDispatch, useSelector } from '../../services/store';
 import { checkUserAuth } from '../../services/slice/userSlice';
 import { Protected } from '../protected-route/protectedRoute';
+import { fetchFeeds, selectFeedOrders } from '../../services/slice/feedSlice';
 
 const App = () => {
   const dispatch = useDispatch();
   const ingredients = useSelector(selectIngredients);
-  // const ordersFeed = useSelector(selectFeed);
+  const ordersFeed = useSelector(selectFeedOrders);
   // const isLoading = useSelector(selectLoading);
   // const isModalOpenedIngridient = useSelector(selectModalIngridient);
   // const isModalOpenedOrder = useSelector(selectModalOrder);
@@ -45,9 +45,9 @@ const App = () => {
     if (!ingredients.length) {
       dispatch(fetchIngredients());
     }
-    // if (!ordersFeed.length) {
-    //   dispatch(fetchFeed());
-    // }
+    if (!ordersFeed.length) {
+      dispatch(fetchFeeds());
+    }
   }, []);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const App = () => {
 
   return (
     <div className={styles.app}>
-      <AppHeader />(
+      <AppHeader />
       <>
         <Routes>
           <Route path='/' element={<ConstructorPage />} />
@@ -115,7 +115,6 @@ const App = () => {
           <Route path='*' element={<NotFound404 />} />
         </Routes>
       </>
-      )
     </div>
   );
 };
