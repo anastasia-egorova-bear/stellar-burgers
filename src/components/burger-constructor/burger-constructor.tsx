@@ -13,17 +13,10 @@ export const BurgerConstructor: FC = () => {
   const items = useSelector(selectConstructorItems)
   //const user = useSelector(selectUser);
 
-  const constructorItems = {
-    bun: {
-      price: 0
-    },
-    ingredients: []
+    const constructorItems = {
+    bun,
+    ingredients: items
   };
-
-  //   const constructorItems = {
-  //   bun,
-  //   ingredients: items
-  // };
 
   const orderRequest = false;
 
@@ -64,8 +57,6 @@ export const BurgerConstructor: FC = () => {
       ),
     [constructorItems]
   );
-
-  // return null;
 
   return (
     <BurgerConstructorUI
