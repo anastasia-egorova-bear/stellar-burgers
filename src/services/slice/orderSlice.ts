@@ -1,4 +1,4 @@
-import { getOrderByNumberApi, orderBurgerApi } from '@api';
+import { getOrderByNumberApi, getOrdersApi, orderBurgerApi } from '@api';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { TOrder } from '@utils-types';
 
@@ -27,6 +27,22 @@ export const fetchOrderByNumber = createAsyncThunk<TOrder, number>(
       return order;
     } catch (e: unknown) {
       const errorMessage = e instanceof Error ? e.message : 'Failed get order';
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const fetchProfileOrders = createAsyncThunk<TOrder[]>(
+  'profileOrders/fetchOrders',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getOrdersApi();
+      return response;
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch profile orders';
       return rejectWithValue(errorMessage);
     }
   }
