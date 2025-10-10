@@ -17,7 +17,8 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  useLocation
+  useLocation,
+  useNavigate
 } from 'react-router-dom';
 import { useEffect } from 'react';
 // import { Preloader } from '@ui';
@@ -40,6 +41,7 @@ const App = () => {
   const location = useLocation();
   const state = location.state;
   const background = state?.background;
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!ingredients.length) {
@@ -58,21 +60,10 @@ const App = () => {
     <div className={styles.app}>
       <AppHeader />
       <>
-        <Routes>
+        <Routes location={background || location}>
           <Route path='/' element={<ConstructorPage />} />
-          <Route
-            path='/ingredients/:id'
-            element={
-              <Modal
-                title={'Детали ингредиента'}
-                onClose={() => window.history.back()}
-              >
-                <IngredientDetails />
-              </Modal>
-            }
-          />
           <Route path='/feed' element={<Feed />} />
-          <Route
+          {/* <Route
             path=':number'
             element={
               <Modal
@@ -82,8 +73,8 @@ const App = () => {
                 <OrderInfo />
               </Modal>
             }
-          />
-          <Route path='/profile/orders/:number' element={<OrderInfo />} />
+          /> */}
+          {/* <Route path='/profile/orders/:number' element={<OrderInfo />} /> */}
           <Route
             path='/login'
             element={<Protected onlyUnAuth component={<Login />} />}
@@ -114,6 +105,37 @@ const App = () => {
           />
           <Route path='*' element={<NotFound404 />} />
         </Routes>
+        {background && (
+          <Routes>
+            <Route
+              path='/ingredients/:id'
+              element={
+                <Modal
+                  title={'Описание ингредиента'}
+                  onClose={() => navigate(-1)}
+                >
+                  <IngredientDetails />
+                </Modal>
+              }
+            />
+            <Route
+              path='/feed/:number'
+              element={
+                <Modal title={''} onClose={() => window.history.back}>
+                  <OrderInfo />
+                </Modal>
+              }
+            />
+            <Route
+              path='/profile/orders/:number'
+              element={
+                <Modal title={``} onClose={() => window.history.back}>
+                  <OrderInfo />
+                </Modal>
+              }
+            />
+          </Routes>
+        )}
       </>
     </div>
   );
