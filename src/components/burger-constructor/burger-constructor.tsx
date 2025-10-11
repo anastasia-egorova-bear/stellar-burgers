@@ -3,9 +3,18 @@ import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store';
 import { useNavigate } from 'react-router-dom';
-import { selectConstructor, selectConstructorItems } from '../../services/slice/burgerConstructorSlice';
+import {
+  reset,
+  selectConstructor,
+  selectConstructorItems
+} from '../../services/slice/burgerConstructorSlice';
 import { selectUser } from '../../services/slice/userSlice';
-import { createOrder } from '../../services/slice/orderSlice';
+import {
+  createOrder,
+  selectOrderData,
+  selectOrderRequest,
+  updateOrderRequest
+} from '../../services/slice/orderSlice';
 
 export const BurgerConstructor: FC = () => {
   const bun = useSelector(selectConstructor);
@@ -13,36 +22,35 @@ export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector(selectUser);
+  const orderRequest = useSelector(selectOrderRequest);
+  const orderModalData = useSelector(selectOrderData);
 
   const constructorItems = {
     bun,
     ingredients: items
   };
 
-  const orderRequest = false;
-
-  const orderModalData = null;
-
   const onOrderClick = async () => {
+    const ingredientsIds = constructorItems.ingredients.map((item) => item._id);
     if (!user) {
       navigate('/login');
       return;
     }
 
-    if (!constructorItems.bun || orderRequest || !constructorItems.ingredients)
-      return;
-
-    const ingredientId = [
-      constructorItems.bun._id,
-      ...constructorItems.ingredients.map((item) => item._id),
-      constructorItems.bun._id
-    ];
-
-    await dispatch(createOrder(ingredientId));
+    if (constructorItems.bun && constructorItems.ingredients.length) {
+      dispatch(
+        createOrder([
+          constructorItems.bun._id,
+          ...ingredientsIds,
+          constructorItems.bun._id
+        ])
+      );
+    }
   };
 
   const closeOrderModal = () => {
-    window.history.back();
+    dispatch(reset());
+    dispatch(updateOrderRequest());
   };
 
   const price = useMemo(

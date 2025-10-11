@@ -5,11 +5,13 @@ import { TOrder } from '@utils-types';
 type TInitState = {
   orderData: TOrder | null;
   orderRequest: boolean;
+  loading: boolean;
 };
 
 const initialState: TInitState = {
   orderData: null,
-  orderRequest: false
+  orderRequest: false,
+  loading: false
 };
 
 export const createOrder = createAsyncThunk(
@@ -68,15 +70,26 @@ const orderSlice = createSlice({
       .addCase(createOrder.fulfilled, (state, action) => {
         state.orderData = action.payload.order;
         state.orderRequest = false;
+      })
+      .addCase(fetchOrderByNumber.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orderData = action.payload;
+      })
+      .addCase(fetchOrderByNumber.rejected, (state) => {
+        state.loading = false;
       });
   },
   selectors: {
     selectOrderData: (state) => state.orderData,
-    selectOrderRequest: (state) => state.orderRequest
+    selectOrderRequest: (state) => state.orderRequest,
+    selectOrderLoading: (state) => state.loading
   }
 });
 
-export const { selectOrderData, selectOrderRequest } = orderSlice.selectors;
+export const { selectOrderData, selectOrderRequest, selectOrderLoading } = orderSlice.selectors;
 export const { updateOrderRequest } = orderSlice.actions;
 export default orderSlice.reducer;
 

@@ -127,7 +127,8 @@ export const userSlice = createSlice({
     },
     setIsAuthenticated(state, action) {
       state.isAuthenticated = action.payload;
-    }
+    },
+
   },
   selectors: {
     selectUser: (state) => state.user,
@@ -148,7 +149,7 @@ export const userSlice = createSlice({
         state.errorMessage = action.error.message!;
         state.isAuthenticated = false;
       })
-      .addCase(fetchRegisterUser.fulfilled, (state, action) => {
+      .addCase(fetchRegisterUser.fulfilled, (state) => {
         state.loading = false;
         // state.user = action.payload.user;
         state.isAuthenticated = true;

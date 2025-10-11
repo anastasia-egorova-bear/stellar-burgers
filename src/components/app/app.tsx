@@ -35,9 +35,6 @@ const App = () => {
   const dispatch = useDispatch();
   const ingredients = useSelector(selectIngredients);
   const ordersFeed = useSelector(selectFeedOrders);
-  // const isLoading = useSelector(selectLoading);
-  // const isModalOpenedIngridient = useSelector(selectModalIngridient);
-  // const isModalOpenedOrder = useSelector(selectModalOrder);
   const location = useLocation();
   const state = location.state;
   const background = state?.background;
@@ -63,18 +60,6 @@ const App = () => {
         <Routes location={background || location}>
           <Route path='/' element={<ConstructorPage />} />
           <Route path='/feed' element={<Feed />} />
-          {/* <Route
-            path=':number'
-            element={
-              <Modal
-                title={'Детали заказа'}
-                onClose={() => window.history.back()}
-              >
-                <OrderInfo />
-              </Modal>
-            }
-          /> */}
-          {/* <Route path='/profile/orders/:number' element={<OrderInfo />} /> */}
           <Route
             path='/login'
             element={<Protected onlyUnAuth component={<Login />} />}

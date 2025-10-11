@@ -1,6 +1,6 @@
 import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
 import {
   fetchFeeds,
@@ -17,7 +17,14 @@ export const Feed: FC = () => {
   const orders = useSelector(selectFeedOrders);
   const isLoading = useSelector(selectFeedLoading);
   const ingredients = useSelector(selectIngredients);
+  const hasLoaded = useRef(false);
 
+  useEffect(() => {
+    if (!hasLoaded.current && !isLoading) {
+      hasLoaded.current = true;
+      dispatch(fetchFeeds());
+    }
+  }, []);
   useEffect(() => {
     if (!ingredients.length) {
       dispatch(fetchIngredients());
