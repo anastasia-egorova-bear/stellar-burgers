@@ -22,7 +22,7 @@ interface TUserState {
   isAuthChecked: boolean;
   userOrders: TOrder[];
   loading: boolean;
-  errorMessage: string;
+  error: string | null;
 }
 
 const initialState: TUserState = {
@@ -30,7 +30,7 @@ const initialState: TUserState = {
   isAuthChecked: false,
   userOrders: [],
   loading: false,
-  errorMessage: ''
+  error: null
 };
 
 export const login = createAsyncThunk(
@@ -110,7 +110,7 @@ export const userSlice = createSlice({
   selectors: {
     selectUser: (state) => state.user,
     selectIsAuthChecked: (state) => state.isAuthChecked,
-    selectErrorMessage: (state) => state.errorMessage,
+    selectErrorMessage: (state) => state.error,
     selectUserOrders: (state) => state.userOrders,
     selectloading: (state) => state.loading
   },
@@ -121,18 +121,18 @@ export const userSlice = createSlice({
       })
       .addCase(fetchRegisterUser.rejected, (state, action) => {
         state.loading = false;
-        state.errorMessage = action.error.message!;
+        state.error = action.error.message!;
       })
       .addCase(fetchRegisterUser.fulfilled, (state) => {
         state.loading = false;
-        state.errorMessage = '';
+        state.error = null;
       })
       .addCase(login.pending, (state) => {
         state.loading = true;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.errorMessage = action.error.message!;
+        state.error = action.error.message!;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload.user;
@@ -144,7 +144,7 @@ export const userSlice = createSlice({
       })
       .addCase(logout.rejected, (state, action) => {
         state.loading = false;
-        state.errorMessage = action.error.message!;
+        state.error = action.error.message!;
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
@@ -155,7 +155,7 @@ export const userSlice = createSlice({
       })
       .addCase(fetchUpdateUser.rejected, (state, action) => {
         state.loading = false;
-        state.errorMessage = action.error.message!;
+        state.error = action.error.message!;
       })
       .addCase(fetchUpdateUser.fulfilled, (state, action) => {
         state.loading = false;
@@ -169,7 +169,7 @@ export const userSlice = createSlice({
       })
       .addCase(fetchUserOrders.rejected, (state, action) => {
         state.loading = false;
-        state.errorMessage = action.error.message!;
+        state.error = action.error.message!;
       })
       .addCase(fetchUserOrders.fulfilled, (state, action) => {
         state.loading = false;

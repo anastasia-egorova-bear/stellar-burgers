@@ -5,11 +5,13 @@ import { TIngredient } from '@utils-types';
 interface TIngredientState {
   ingredients: TIngredient[];
   loading: boolean;
+  error: string | null;
 }
 
 const initialState: TIngredientState = {
   ingredients: [],
-  loading: false
+  loading: false,
+  error: null
 };
 
 export const fetchIngredients = createAsyncThunk(
@@ -30,23 +32,28 @@ export const ingredientsSlice = createSlice({
   reducers: {},
   selectors: {
     selectIngredients: (state) => state.ingredients,
-    selectLoading: (state) => state.loading
+    selectLoading: (state) => state.loading,
+    selectIngredientsError: (state) => state.error
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchIngredients.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
-      .addCase(fetchIngredients.rejected, (state) => {
+      .addCase(fetchIngredients.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.error.message || 'Произошла ошибка';
       })
       .addCase(fetchIngredients.fulfilled, (state, action) => {
         state.loading = false;
         state.ingredients = action.payload;
+        state.error = null;
       });
   }
 });
 
-export const { selectLoading, selectIngredients } = ingredientsSlice.selectors;
+export const { selectLoading, selectIngredients, selectIngredientsError } =
+  ingredientsSlice.selectors;
 
 export default ingredientsSlice.reducer;

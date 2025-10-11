@@ -18,15 +18,12 @@ export const burgerConstructorSlice = createSlice({
     setBun(state, action) {
       state.bun = action.payload;
     },
-    addItem(state, action) {
-      if (!state.items) {
-        state.items = [];
+    addItem(state, action: PayloadAction<TConstructorIngredient>) {
+      if (action.payload.type === 'bun') {
+        state.bun = action.payload;
+      } else {
+        state.items.push(action.payload);
       }
-      const constructorIngredient: TConstructorIngredient = {
-        ...action.payload,
-        id: `${action.payload._id}_${Date.now()}`
-      };
-      state.items.push(constructorIngredient);
     },
     removeItem(state, action: PayloadAction<number>) {
       if (!state.items) {

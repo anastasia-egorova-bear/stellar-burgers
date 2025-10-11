@@ -6,12 +6,14 @@ type TInitState = {
   orderData: TOrder | null;
   orderRequest: boolean;
   loading: boolean;
+  error: string | null;
 };
 
 const initialState: TInitState = {
   orderData: null,
   orderRequest: false,
-  loading: false
+  loading: false,
+  error: null
 };
 
 export const createOrder = createAsyncThunk(
@@ -44,39 +46,59 @@ const orderSlice = createSlice({
     updateOrderRequest(state) {
       state.orderRequest = false;
       state.orderData = null;
+      state.error = null;
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(createOrder.pending, (state) => {
         state.orderRequest = true;
+        state.error = null;
       })
-      .addCase(createOrder.rejected, (state) => {
+      .addCase(createOrder.rejected, (state, action) => {
         state.orderRequest = false;
+        state.error = action.error.message || 'Произошла ошибка';
       })
       .addCase(createOrder.fulfilled, (state, action) => {
         state.orderData = action.payload.order;
         state.orderRequest = false;
+        state.error = null;
       })
       .addCase(fetchOrderByNumber.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
         state.loading = false;
         state.orderData = action.payload;
+        state.error = null;
       })
-      .addCase(fetchOrderByNumber.rejected, (state) => {
+      .addCase(fetchOrderByNumber.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.error.message || 'Произошла ошибка';
+      })
+      .addCase(fetchProfileOrders.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProfileOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Произошла ошибка';
       });
   },
   selectors: {
     selectOrderData: (state) => state.orderData,
     selectOrderRequest: (state) => state.orderRequest,
-    selectOrderLoading: (state) => state.loading
+    selectOrderLoading: (state) => state.loading,
+    selectError: (state) => state.error
   }
 });
 
-export const { selectOrderData, selectOrderRequest, selectOrderLoading } =
-  orderSlice.selectors;
+export const {
+  selectOrderData,
+  selectOrderRequest,
+  selectOrderLoading,
+  selectError
+} = orderSlice.selectors;
 export const { updateOrderRequest } = orderSlice.actions;
 export default orderSlice.reducer;
