@@ -55,9 +55,8 @@ export const burgerConstructorSlice = createSlice({
   }
 });
 
-
-export const { selectConstructor, selectConstructorItems } = burgerConstructorSlice.selectors;
+export const { selectConstructor, selectConstructorItems } =
+  burgerConstructorSlice.selectors;
 export const { setBun, addItem, removeItem, reorderItems, reset } =
   burgerConstructorSlice.actions;
 export default burgerConstructorSlice.reducer;
-

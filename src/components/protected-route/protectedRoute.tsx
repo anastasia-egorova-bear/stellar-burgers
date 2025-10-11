@@ -1,7 +1,10 @@
-import { Navigate, useLocation } from "react-router-dom";
-import { Preloader } from "../ui/preloader/preloader";
-import { useSelector } from "../../services/store";
-import { selectIsAuthChecked, selectUser } from "../../services/slice/userSlice";
+import { Navigate, useLocation } from 'react-router-dom';
+import { Preloader } from '../ui/preloader/preloader';
+import { useSelector } from '../../services/store';
+import {
+  selectIsAuthChecked,
+  selectUser
+} from '../../services/slice/userSlice';
 
 type ProtectedProps = {
   component: React.JSX.Element;

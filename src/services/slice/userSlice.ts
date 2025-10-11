@@ -70,7 +70,7 @@ export const checkUserAuth = createAsyncThunk(
         .catch(() => {
           deleteCookie('accessToken');
           dispatch(setIsAuthChecked(false));
-        })
+        });
     } else {
       dispatch(setIsAuthChecked(true));
     }
@@ -80,11 +80,10 @@ export const checkUserAuth = createAsyncThunk(
 export const fetchRegisterUser = createAsyncThunk(
   'user/register',
   async (data: TRegisterData) => {
-   
-      const response = await registerUserApi(data);
-      setCookie('accessToken', response.accessToken);
-      localStorage.setItem('refreshToken', response.refreshToken);
-      return response.user;
+    const response = await registerUserApi(data);
+    setCookie('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
+    return response.user;
   }
 );
 
@@ -93,9 +92,7 @@ export const fetchUpdateUser = createAsyncThunk(
   async (data: Partial<TRegisterData>) => updateUserApi(data)
 );
 
-export const fetchUserOrders = createAsyncThunk(
-  'user/orders', 
-  async () =>
+export const fetchUserOrders = createAsyncThunk('user/orders', async () =>
   getOrdersApi()
 );
 
@@ -108,7 +105,7 @@ export const userSlice = createSlice({
     },
     setIsAuthChecked: (state, action) => {
       state.isAuthChecked = action.payload;
-    },
+    }
   },
   selectors: {
     selectUser: (state) => state.user,
@@ -125,7 +122,6 @@ export const userSlice = createSlice({
       .addCase(fetchRegisterUser.rejected, (state, action) => {
         state.loading = false;
         state.errorMessage = action.error.message!;
-   
       })
       .addCase(fetchRegisterUser.fulfilled, (state) => {
         state.loading = false;
@@ -178,12 +174,11 @@ export const userSlice = createSlice({
       .addCase(fetchUserOrders.fulfilled, (state, action) => {
         state.loading = false;
         state.userOrders = action.payload;
-      })
+      });
   }
 });
 
-export const { setUser, setIsAuthChecked } =
-  userSlice.actions;
+export const { setUser, setIsAuthChecked } = userSlice.actions;
 export const {
   selectUser,
   selectIsAuthChecked,

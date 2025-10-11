@@ -9,7 +9,7 @@ interface TIngredientState {
 
 const initialState: TIngredientState = {
   ingredients: [],
-  loading: false,
+  loading: false
 };
 
 export const fetchIngredients = createAsyncThunk(
@@ -27,27 +27,26 @@ export const fetchIngredients = createAsyncThunk(
 export const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
-  reducers: { },
+  reducers: {},
   selectors: {
     selectIngredients: (state) => state.ingredients,
-    selectLoading: (state) => state.loading,
+    selectLoading: (state) => state.loading
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchIngredients.pending, (state) => {
-      state.loading = true;
-    })
-    .addCase(fetchIngredients.rejected, (state) => {
-      state.loading = false;
-    })
-    .addCase(fetchIngredients.fulfilled, (state, action) => {
-      state.loading = false;
-      state.ingredients = action.payload;
-    });
+    builder
+      .addCase(fetchIngredients.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchIngredients.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(fetchIngredients.fulfilled, (state, action) => {
+        state.loading = false;
+        state.ingredients = action.payload;
+      });
   }
 });
 
-export const { selectLoading,selectIngredients } = ingredientsSlice.selectors;
+export const { selectLoading, selectIngredients } = ingredientsSlice.selectors;
 
 export default ingredientsSlice.reducer;
-
-
