@@ -14,15 +14,11 @@ export const Protected = ({
 }: ProtectedProps): React.JSX.Element => {
   const user = useSelector(selectUser);
   const location = useLocation();
-  // const isAuthenticated = useSelector(selectIsAuthenticated);
   const isAuthChecked = useSelector(selectIsAuthChecked);
 
   if (!isAuthChecked) {
     return <Preloader />;
   }
-  // if (!onlyUnAuth && !isAuthenticated) {
-  //   return <Navigate to='/login' state={{ from: location }} />;
-  // }
 
   if (!onlyUnAuth && !user) {
     return <Navigate to='/login' state={{ from: location }} />;
@@ -33,7 +29,5 @@ export const Protected = ({
     return <Navigate to={from} />;
   }
 
-  //onlyUnAuth && !user for autorized and unautorized
-  //!onlyUnAuth && user or autorized and autorized
   return component;
 };

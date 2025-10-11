@@ -21,7 +21,6 @@ import {
   useNavigate
 } from 'react-router-dom';
 import { useEffect } from 'react';
-// import { Preloader } from '@ui';
 import {
   fetchIngredients,
   selectIngredients

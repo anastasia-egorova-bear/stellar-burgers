@@ -21,8 +21,6 @@ interface TUserState {
   user: TUser | null;
   isAuthChecked: boolean;
   userOrders: TOrder[];
-  isAuthenticated: boolean;
-  isModalOpen: boolean;
   loading: boolean;
   errorMessage: string;
 }
@@ -31,8 +29,6 @@ const initialState: TUserState = {
   user: null,
   isAuthChecked: false,
   userOrders: [],
-  isAuthenticated: false,
-  isModalOpen: false,
   loading: false,
   errorMessage: ''
 };
@@ -77,16 +73,14 @@ export const checkUserAuth = createAsyncThunk(
       getUserApi()
         .then((user) => {
           dispatch(setUser(user.user));
-          dispatch(setIsAuthenticated(true));
+          dispatch(setIsAuthChecked(true));
         })
         .catch(() => {
           deleteCookie('accessToken');
-          dispatch(setIsAuthenticated(false));
+          dispatch(setIsAuthChecked(false));
         })
-        .finally(() => dispatch(setIsAuthChecked(true)));
     } else {
       dispatch(setIsAuthChecked(true));
-      dispatch(setIsAuthenticated(false));
     }
   }
 );
@@ -111,7 +105,9 @@ export const fetchUpdateUser = createAsyncThunk(
   async (data: Partial<TRegisterData>) => updateUserApi(data)
 );
 
-export const fetchUserOrders = createAsyncThunk('user/orders', async () =>
+export const fetchUserOrders = createAsyncThunk(
+  'user/orders', 
+  async () =>
   getOrdersApi()
 );
 
@@ -125,18 +121,12 @@ export const userSlice = createSlice({
     setIsAuthChecked: (state, action) => {
       state.isAuthChecked = action.payload;
     },
-    setIsAuthenticated(state, action) {
-      state.isAuthenticated = action.payload;
-    },
-
   },
   selectors: {
     selectUser: (state) => state.user,
     selectIsAuthChecked: (state) => state.isAuthChecked,
-    selectIsAuthenticated: (state) => state.isAuthenticated,
     selectErrorMessage: (state) => state.errorMessage,
     selectUserOrders: (state) => state.userOrders,
-    selectisModalOpen: (state) => state.isModalOpen,
     selectloading: (state) => state.loading
   },
   extraReducers: (builder) => {
@@ -147,12 +137,10 @@ export const userSlice = createSlice({
       .addCase(fetchRegisterUser.rejected, (state, action) => {
         state.loading = false;
         state.errorMessage = action.error.message!;
-        state.isAuthenticated = false;
+   
       })
       .addCase(fetchRegisterUser.fulfilled, (state) => {
         state.loading = false;
-        // state.user = action.payload.user;
-        state.isAuthenticated = true;
         state.errorMessage = '';
       })
       .addCase(login.pending, (state) => {
@@ -160,14 +148,12 @@ export const userSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.isAuthenticated = false;
         state.errorMessage = action.error.message!;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.isAuthChecked = true;
         state.loading = false;
-        state.isAuthenticated = true;
       })
       .addCase(logout.pending, (state) => {
         state.loading = true;
@@ -179,7 +165,6 @@ export const userSlice = createSlice({
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.loading = false;
-        state.isAuthenticated = false;
       })
       .addCase(fetchUpdateUser.pending, (state) => {
         state.loading = true;
@@ -207,38 +192,29 @@ export const userSlice = createSlice({
         state.userOrders = action.payload;
       })
       .addMatcher(isRejectedAction, (state, action: RejectedAction) => {
-        // Очищаем токены при любой ошибке
         deleteCookie('accessToken');
         localStorage.removeItem('refreshToken');
 
-        // Устанавливаем флаг аутентификации в false
-        state.isAuthenticated = false;
-
-        // Сохраняем сообщение об ошибке
         state.errorMessage =
           action.error.message || 'Произошла ошибка при выполнении запроса';
 
-        // Если была попытка авторизации, сбрасываем состояние
         if (action.type.includes('login/rejected')) {
           state.isAuthChecked = true;
           state.user = null;
         }
 
-        // Общий сброс состояния при ошибке
         state.loading = false;
       });
   }
 });
 
-export const { setUser, setIsAuthChecked, setIsAuthenticated } =
+export const { setUser, setIsAuthChecked } =
   userSlice.actions;
 export const {
   selectUser,
   selectIsAuthChecked,
-  selectIsAuthenticated,
   selectErrorMessage,
   selectUserOrders,
-  selectisModalOpen,
   selectloading
 } = userSlice.selectors;
 
