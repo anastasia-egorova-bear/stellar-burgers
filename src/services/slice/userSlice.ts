@@ -33,14 +33,6 @@ const initialState: TUserState = {
   errorMessage: ''
 };
 
-interface RejectedAction extends Action {
-  error: Error;
-}
-
-function isRejectedAction(action: Action): action is RejectedAction {
-  return action.type.endsWith('rejected');
-}
-
 export const login = createAsyncThunk(
   'user/login',
   async (data: TLoginData) => {
@@ -87,16 +79,12 @@ export const checkUserAuth = createAsyncThunk(
 
 export const fetchRegisterUser = createAsyncThunk(
   'user/register',
-  async (data: TRegisterData, { rejectWithValue }) => {
-    try {
-      const res = await registerUserApi(data);
-      setCookie('accessToken', res.accessToken);
-      localStorage.setItem('refreshToken', res.refreshToken);
-      return res.user;
-    } catch (e: unknown) {
-      const errorMessage = e instanceof Error ? e.message : 'Unknown error';
-      return rejectWithValue(errorMessage);
-    }
+  async (data: TRegisterData) => {
+   
+      const response = await registerUserApi(data);
+      setCookie('accessToken', response.accessToken);
+      localStorage.setItem('refreshToken', response.refreshToken);
+      return response.user;
   }
 );
 
@@ -191,20 +179,6 @@ export const userSlice = createSlice({
         state.loading = false;
         state.userOrders = action.payload;
       })
-      .addMatcher(isRejectedAction, (state, action: RejectedAction) => {
-        deleteCookie('accessToken');
-        localStorage.removeItem('refreshToken');
-
-        state.errorMessage =
-          action.error.message || 'Произошла ошибка при выполнении запроса';
-
-        if (action.type.includes('login/rejected')) {
-          state.isAuthChecked = true;
-          state.user = null;
-        }
-
-        state.loading = false;
-      });
   }
 });
 

@@ -21,32 +21,19 @@ export const createOrder = createAsyncThunk(
 
 export const fetchOrderByNumber = createAsyncThunk<TOrder, number>(
   'order/fetchByNumber',
-  async (number, { rejectWithValue }) => {
-    try {
-      const res = await getOrderByNumberApi(number);
-      const order = res.orders?.[0] as TOrder | undefined;
-      if (!order) throw new Error('Order not found');
-      return order;
-    } catch (e: unknown) {
-      const errorMessage = e instanceof Error ? e.message : 'Failed get order';
-      return rejectWithValue(errorMessage);
-    }
+  async (number) => {
+    const response = await getOrderByNumberApi(number);
+    const order = response.orders?.[0] as TOrder | undefined;
+    if (!order) throw new Error('Заказ не найден');
+    return order;
   }
 );
 
 export const fetchProfileOrders = createAsyncThunk<TOrder[]>(
   'profileOrders/fetchOrders',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await getOrdersApi();
-      return response;
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Failed to fetch profile orders';
-      return rejectWithValue(errorMessage);
-    }
+  async () => {
+    const response = await getOrdersApi();
+    return response;
   }
 );
 
@@ -89,7 +76,7 @@ const orderSlice = createSlice({
   }
 });
 
-export const { selectOrderData, selectOrderRequest, selectOrderLoading } = orderSlice.selectors;
+export const { selectOrderData, selectOrderRequest, selectOrderLoading } =
+  orderSlice.selectors;
 export const { updateOrderRequest } = orderSlice.actions;
 export default orderSlice.reducer;
-

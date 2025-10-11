@@ -5,25 +5,17 @@ import { TIngredient } from '@utils-types';
 interface TIngredientState {
   ingredients: TIngredient[];
   loading: boolean;
-  errorText: string;
 }
 
 const initialState: TIngredientState = {
   ingredients: [],
   loading: false,
-  errorText: ''
 };
-
-// export const fetchIngredients = createAsyncThunk(
-//   'ingredients/getAll',
-//   async () => getIngredientsApi()
-// );
 
 export const fetchIngredients = createAsyncThunk(
   'ingredients/fetchIngredients',
   async () => {
     try {
-      // Вызываем API функцию
       const response = await getIngredientsApi();
       return response;
     } catch (error) {
@@ -39,15 +31,13 @@ export const ingredientsSlice = createSlice({
   selectors: {
     selectIngredients: (state) => state.ingredients,
     selectLoading: (state) => state.loading,
-    selectErrorText: (state) => state.errorText
   },
   extraReducers: (builder) => {
     builder.addCase(fetchIngredients.pending, (state) => {
       state.loading = true;
     })
-    .addCase(fetchIngredients.rejected, (state, action) => {
+    .addCase(fetchIngredients.rejected, (state) => {
       state.loading = false;
-      state.errorText = action.error.message!;
     })
     .addCase(fetchIngredients.fulfilled, (state, action) => {
       state.loading = false;
@@ -56,7 +46,7 @@ export const ingredientsSlice = createSlice({
   }
 });
 
-export const { selectLoading,selectIngredients,selectErrorText } = ingredientsSlice.selectors;
+export const { selectLoading,selectIngredients } = ingredientsSlice.selectors;
 
 export default ingredientsSlice.reducer;
 

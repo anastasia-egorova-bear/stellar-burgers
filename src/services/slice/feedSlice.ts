@@ -7,7 +7,6 @@ type FeedState = {
   total: number;
   totalToday: number;
   isLoading: boolean;
-  error: string | null;
 };
 
 const initialState: FeedState = {
@@ -15,20 +14,13 @@ const initialState: FeedState = {
   total: 0,
   totalToday: 0,
   isLoading: false,
-  error: null
 };
 
 export const fetchFeeds = createAsyncThunk<TOrdersData>(
   'feed/fetchFeeds',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await getFeedsApi();
-      return response;
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to fetch feeds';
-      return rejectWithValue(errorMessage);
-    }
+  async () => {
+    const response = await getFeedsApi();
+    return response;
   }
 );
 
@@ -47,24 +39,20 @@ const feedSlice = createSlice({
     selectFeedTotal: (state) => state.total,
     selectFeedTotalToday: (state) => state.totalToday,
     selectFeedLoading: (state) => state.isLoading,
-    selectFeedError: (state) => state.error
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchFeeds.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
       })
       .addCase(fetchFeeds.fulfilled, (state, action) => {
         state.isLoading = false;
         state.orders = action.payload.orders;
         state.total = action.payload.total;
         state.totalToday = action.payload.totalToday;
-        state.error = null;
       })
-      .addCase(fetchFeeds.rejected, (state, action) => {
+      .addCase(fetchFeeds.rejected, (state) => {
         state.isLoading = false;
-        state.error = action.payload as string;
       });
   }
 });
@@ -75,7 +63,6 @@ export const {
   selectFeedTotal,
   selectFeedTotalToday,
   selectFeedLoading,
-  selectFeedError
 } = feedSlice.selectors;
 
 export default feedSlice.reducer;
