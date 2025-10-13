@@ -16,9 +16,12 @@ const initialState: TInitState = {
   error: null
 };
 
-export const createOrder = createAsyncThunk(
+export const createOrder = createAsyncThunk<TOrder, string[]>(
   'orders/newOrder',
-  async (data: string[]) => orderBurgerApi(data)
+  async (ingredientIds) => {
+    const res = await orderBurgerApi(ingredientIds);
+    return res.order as TOrder;
+  }
 );
 
 export const fetchOrderByNumber = createAsyncThunk<TOrder, number>(
@@ -31,14 +34,6 @@ export const fetchOrderByNumber = createAsyncThunk<TOrder, number>(
   }
 );
 
-export const fetchProfileOrders = createAsyncThunk<TOrder[]>(
-  'profileOrders/fetchOrders',
-  async () => {
-    const response = await getOrdersApi();
-    return response;
-  }
-);
-
 const orderSlice = createSlice({
   name: 'order',
   initialState,
@@ -46,7 +41,6 @@ const orderSlice = createSlice({
     updateOrderRequest(state) {
       state.orderRequest = false;
       state.orderData = null;
-      state.error = null;
     }
   },
   extraReducers: (builder) => {
@@ -56,11 +50,13 @@ const orderSlice = createSlice({
         state.error = null;
       })
       .addCase(createOrder.rejected, (state, action) => {
+        state.loading = false;
+
         state.orderRequest = false;
         state.error = action.error.message || 'Произошла ошибка';
       })
       .addCase(createOrder.fulfilled, (state, action) => {
-        state.orderData = action.payload.order;
+        state.orderData = action.payload;
         state.orderRequest = false;
         state.error = null;
       })
@@ -74,14 +70,6 @@ const orderSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchOrderByNumber.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || 'Произошла ошибка';
-      })
-      .addCase(fetchProfileOrders.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchProfileOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Произошла ошибка';
       });

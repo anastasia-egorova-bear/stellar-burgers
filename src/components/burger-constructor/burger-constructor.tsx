@@ -4,7 +4,6 @@ import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store';
 import { useNavigate } from 'react-router-dom';
 import {
-  reset,
   selectConstructor,
   selectConstructorItems
 } from '../../services/slice/burgerConstructorSlice';
@@ -31,28 +30,25 @@ export const BurgerConstructor: FC = () => {
   };
 
   const onOrderClick = async () => {
-    const ingredientsIds = constructorItems.ingredients.map((item) => item._id);
     if (!user) {
       navigate('/login');
       return;
     }
 
-    if (constructorItems.bun && constructorItems.ingredients.length) {
-      dispatch(
-        createOrder([
-          constructorItems.bun._id,
-          ...ingredientsIds,
-          constructorItems.bun._id
-        ])
-      );
-    }
+    if (!constructorItems.bun || orderRequest || !constructorItems.ingredients)
+      return;
+
+    const ingredientIds = [
+      constructorItems.bun._id,
+      ...constructorItems.ingredients.map((item) => item._id),
+      constructorItems.bun._id
+    ];
+
+    await dispatch(createOrder(ingredientIds));
   };
 
   const closeOrderModal = () => {
-    if (orderModalData) {
-      dispatch(reset());
-      dispatch(updateOrderRequest());
-    }
+    dispatch(updateOrderRequest());
   };
 
   const price = useMemo(

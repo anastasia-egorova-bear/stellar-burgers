@@ -26,11 +26,19 @@ export const fetchFeeds = createAsyncThunk<TOrdersData>(
   }
 );
 
+export const fetchProfileOrders = createAsyncThunk<TOrder[]>(
+  'profileOrders/fetchOrders',
+  async () => {
+    const response = await getOrdersApi();
+    return response;
+  }
+);
+
 const feedSlice = createSlice({
   name: 'feed',
   initialState,
   reducers: {
-    clearFeed: (state) => {
+    clearFeed(state) {
       state.orders = [];
       state.total = 0;
       state.totalToday = 0;
@@ -59,6 +67,21 @@ const feedSlice = createSlice({
       .addCase(fetchFeeds.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchProfileOrders.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchProfileOrders.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.orders = action.payload;
+        state.total = action.payload.length;
+        state.totalToday = action.payload.length;
+        state.error = null;
+      })
+      .addCase(fetchProfileOrders.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || 'Произошла ошибка';
       });
   }
 });
