@@ -25,7 +25,7 @@ export const OrderInfo: FC = () => {
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
-    if (!orderData || !ingredients.length || !orderData.ingredients)
+    if (!orderData || !ingredients.length)
       return null;
 
     const date = new Date(orderData.createdAt);
