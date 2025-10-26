@@ -9,7 +9,7 @@ type TInitState = {
   error: string | null;
 };
 
-const initialState: TInitState = {
+export const initialState: TInitState = {
   orderData: null,
   orderRequest: false,
   loading: false,

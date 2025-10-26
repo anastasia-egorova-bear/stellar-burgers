@@ -1,22 +1,9 @@
-const selectors = {
-  ingCategoryBuns: '[data-cy=ingredient-category-buns]',
-  ingCategoryMains: '[data-cy=ingredient-category-mains]',
-  ingCategorySauces: '[data-cy=ingredient-category-sauces]',
-  ingItem: '[data-cy=ingredient-item]',
-  ingAddButton: '[data-cy=ingredient-add-button]',
-  constructorBunTop: '[data-cy=constructor-bun-top]',
-  constructorBunBottom: '[data-cy=constructor-bun-bottom]',
-  constructorIngredient: '[data-cy=constructor-ingredient]',
-  modal: '[data-cy=modal]',
-  modalClose: '[data-cy=modal-close]',
-  modalOverlay: '[data-cy=modal-overlay]',
-  orderButton: '[data-cy=order-button]',
-  orderNumber: '[data-cy=order-number]'
-};
+import { selectors } from 'cypress/support/commands';
+import '../support/commands';
 
 describe('тесты для Burger constructor', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:4000/');
+    cy.visit('/');
     cy.intercept('GET', 'api/ingredients', { fixture: 'ingredients.json' }).as(
       'getIngredients'
     );
@@ -25,36 +12,15 @@ describe('тесты для Burger constructor', () => {
 
   describe('тест добавления ингредиентов', () => {
     it('Добавление булки в конструктор', () => {
-      cy.get(selectors.ingCategoryBuns)
-        .next('ul') // или .next('ul') — оба варианта работают
-        .find(selectors.ingItem)
-        .contains('Добавить')
-        .click({ force: true });
-
-      cy.get(selectors.constructorBunTop).should('exist');
-      cy.get(selectors.constructorBunBottom).should('exist');
+      cy.addBun();
     });
 
     it('Добавление ингредиента в конструктор', () => {
-      cy.get(selectors.ingCategoryMains)
-        .next('ul')
-        .find(selectors.ingItem)
-        .first()
-        .find('button')
-        .contains('Добавить')
-        .click({ force: true });
-      cy.get(selectors.constructorIngredient).should('exist');
+      cy.addMainIngredient();
     });
 
     it('Добавление соуса в конструктор', () => {
-      cy.get(selectors.ingCategorySauces)
-        .next('ul')
-        .find(selectors.ingItem)
-        .first()
-        .find('button')
-        .contains('Добавить')
-        .click({ force: true });
-      cy.get(selectors.constructorIngredient).should('exist');
+      cy.addSauce();
     });
   });
 
@@ -64,7 +30,6 @@ describe('тесты для Burger constructor', () => {
       cy.url().should('include', '/ingredients/');
       cy.contains('Краторная булка N-200i').should('be.visible');
 
-      // Ожидаем модалку
       cy.get(selectors.modal).should('exist');
       cy.get(selectors.modal).contains('Краторная булка N-200i');
       cy.get(selectors.modalClose).click();
@@ -87,7 +52,7 @@ describe('тесты для Burger constructor', () => {
       window.localStorage.setItem('accessToken', 'Bearer test-token');
       window.localStorage.setItem('refreshToken', 'test-refreshToken');
 
-      cy.visit('http://localhost:4000/');
+      cy.visit('/');
       cy.intercept('GET', 'api/ingredients', {
         fixture: 'ingredients.json'
       }).as('getIngredients');
@@ -99,21 +64,9 @@ describe('тесты для Burger constructor', () => {
     });
 
     it('Оформление и отображение номера заказа', () => {
-      cy.get(selectors.ingCategoryBuns)
-        .next()
-        .find(selectors.ingItem)
-        .contains('Добавить')
-        .click({ force: true });
-
-      cy.get(selectors.ingCategoryMains)
-        .next('ul')
-        .find(selectors.ingItem)
-        .first()
-        .find('button')
-        .contains('Добавить')
-        .click({ force: true });
-
-      cy.get(selectors.orderButton).click({ force: true });
+      cy.addBun();
+      cy.addMainIngredient();
+      cy.placeOrder();
 
       cy.url().then((url) => {
         if (url.includes('/login')) {
@@ -121,7 +74,7 @@ describe('тесты для Burger constructor', () => {
           cy.get('input[type=password]').type('password');
           cy.get('button[type=submit]').click({ force: true });
           cy.wait('@login');
-          cy.get(selectors.orderButton).click({ force: true });
+          cy.placeOrder();
         }
       });
 

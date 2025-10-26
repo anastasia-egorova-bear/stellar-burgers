@@ -1,12 +1,7 @@
-import { burgerConstructorSlice, ConstructorState } from './burgerConstructorSlice';
+import { burgerConstructorSlice, ConstructorState, initialState } from './burgerConstructorSlice';
 import type { TIngredient, TConstructorIngredient } from '../../utils/types';
 
 const { reducer, actions } = burgerConstructorSlice;
-
-const initialState: ConstructorState = {
-  bun: null,
-  items: []
-};
 
 describe('burgerConstructorSlice', () => {
   const mockBun: TIngredient = {

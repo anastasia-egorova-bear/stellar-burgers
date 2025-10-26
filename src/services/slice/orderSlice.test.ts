@@ -2,6 +2,7 @@ import orderReducer, {
   createOrder,
   fetchOrderByNumber,
   updateOrderRequest,
+  initialState
 } from './orderSlice';
 import { TOrder } from '@utils-types';
 
@@ -16,13 +17,6 @@ const mockOrder: TOrder = {
 };
 
 describe('orderSlice reducer', () => {
-  const initialState = {
-    orderData: null,
-    orderRequest: false,
-    loading: false,
-    error: null
-  };
-
   it('should handle updateOrderRequest', () => {
     const state = {
       ...initialState,

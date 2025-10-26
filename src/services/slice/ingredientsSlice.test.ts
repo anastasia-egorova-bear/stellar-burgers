@@ -1,5 +1,6 @@
-import { ingredientsSlice, fetchIngredients } from './ingredientsSlice'; // путь к вашему файлу
+import { ingredientsSlice, fetchIngredients, initialState } from './ingredientsSlice';
 import { TIngredient } from '@utils-types';
+
 
 // Пример данных ингредиентов
 const mockIngredients: TIngredient[] = [
@@ -19,12 +20,6 @@ const mockIngredients: TIngredient[] = [
 ];
 
 describe('ingredientsSlice reducer', () => {
-  const initialState = {
-    ingredients: [],
-    loading: false,
-    error: null
-  };
-
   it('should handle pending action', () => {
     const action = { type: fetchIngredients.pending.type };
     const state = ingredientsSlice.reducer(initialState, action);

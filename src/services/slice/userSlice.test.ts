@@ -1,17 +1,9 @@
-import { userSlice } from './userSlice'; // путь к твоему файлу
+import { userSlice, initialState } from './userSlice';
 import { TUser, TOrder } from '@utils-types';
 
 const { reducer, actions } = userSlice;
 
 describe('userSlice reducer', () => {
-  const initialState = {
-    user: null,
-    isAuthChecked: false,
-    userOrders: [],
-    loading: false,
-    error: null
-  };
-
   it('should handle pending action (e.g., login.pending)', () => {
     const action = { type: 'user/login/pending' };
     const state = reducer(initialState, action);
