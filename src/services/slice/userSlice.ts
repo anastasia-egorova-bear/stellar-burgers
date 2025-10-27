@@ -7,13 +7,8 @@ import {
   TLoginData,
   TRegisterData,
   updateUserApi
-} from '@api';
-import {
-  Action,
-  createAsyncThunk,
-  createSlice,
-  PayloadAction
-} from '@reduxjs/toolkit';
+} from '../../utils/burger-api';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TUser, TOrder } from '@utils-types';
 import { setCookie, deleteCookie, getCookie } from '../../utils/cookie';
 
@@ -25,7 +20,7 @@ interface TUserState {
   error: string | null;
 }
 
-const initialState: TUserState = {
+export const initialState: TUserState = {
   user: null,
   isAuthChecked: false,
   userOrders: [],
